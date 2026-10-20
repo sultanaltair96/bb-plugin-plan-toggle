@@ -3,6 +3,7 @@
 import { defineRpcContract, type BbPluginApi } from "@get-bb/plugin-sdk";
 import { z } from "zod";
 import { PLAN_MODELS_CHANGED } from "./channels";
+import { TOGGLE_KEY_SETTING_LABELS, type ToggleKeySetting } from "./keys";
 
 const modelSelectionSchema = z.object({
   model: z.string().min(1),
@@ -33,6 +34,17 @@ export const rpcContract = defineRpcContract({
 const STORAGE_KEY = "plan-models";
 
 export default async function plugin(bb: BbPluginApi) {
+  bb.settings.define({
+    toggleKey: {
+      type: "select",
+      label: "Toggle key",
+      description: "Tap this key on its own to switch between Build and Plan.",
+      options: Object.keys(TOGGLE_KEY_SETTING_LABELS) as ToggleKeySetting[],
+      experimental_optionLabels: { ...TOGGLE_KEY_SETTING_LABELS },
+      default: "auto",
+    },
+  });
+
   const read = async (): Promise<PlanModels> => {
     const parsed = planModelsSchema.safeParse(await bb.storage.kv.get(STORAGE_KEY));
     return parsed.success ? parsed.data : {};

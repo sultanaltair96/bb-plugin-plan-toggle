@@ -6,7 +6,10 @@ description: Explain or troubleshoot the Plan Toggle plugin, which switches a bb
 # Plan Toggle
 
 Tap **Control** (press and release it on its own) to switch the composer you
-are using between Build and bb's built-in Plan mode.
+are using between Build and bb's built-in Plan mode. Default key: either
+Control on macOS, **left Ctrl** on Windows and Linux (right Ctrl is the Voice
+Shortcut plugin's default there). The setting **Toggle key** (`toggleKey`:
+`auto`, `Control`, `ControlLeft`, `ControlRight`) changes it.
 
 | Current state | Tap Control |
 | --- | --- |

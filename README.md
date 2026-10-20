@@ -4,7 +4,9 @@ Switch between **Build** and **Plan** with one key, like OpenCode's
 Plan/Build toggle, using [bb](https://getbb.app)'s built-in Plan mode.
 Optionally, plan with a different model than the one you build with.
 
-Tap **Control**, pressed and released on its own:
+Tap **Control**, pressed and released on its own. By default that's either
+Control key on macOS and **left Ctrl** on Windows and Linux; choose another in
+the plugin's settings (**Toggle key**).
 
 | You're in… | Tap Control → |
 | --- | --- |
@@ -12,8 +14,8 @@ Tap **Control**, pressed and released on its own:
 | Plan, not yet sent | `/plan` is removed: back to Build. |
 | Plan, already active | The thread exits Plan mode, like clicking "Exit plan mode". |
 
-Control combined with another key, a long press, Control-click (right-click on
-macOS), and taps while a dialog has focus do nothing. Only agents that offer
+Control combined with another key (Ctrl+C and friends), a long press,
+Control-click, and taps while a dialog has focus do nothing. Only agents that offer
 Plan mode in bb (Claude Code and Codex) respond.
 
 ## Plan model
@@ -42,7 +44,16 @@ Requires bb 0.46 or later.
 bb plugin install git:https://github.com/sultanaltair96/bb-plugin-plan-toggle
 ```
 
-Then reload the bb window (⌘R).
+Then reload the bb window (⌘R on Mac, Ctrl+R elsewhere). To change the key
+from a terminal:
+
+```sh
+bb plugin config plan-toggle set toggleKey ControlRight   # auto, Control, ControlLeft, ControlRight
+```
+
+Using it together with [Voice Shortcut](https://github.com/sultanaltair96/bb-plugin-voice-shortcut)?
+Their defaults don't overlap: off the Mac, Plan Toggle uses left Ctrl and
+Voice Shortcut uses right Ctrl.
 
 ## How it works
 

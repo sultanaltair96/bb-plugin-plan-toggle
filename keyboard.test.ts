@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, test } from "vitest";
 import { loadPluginApp, mountPluginContentScripts } from "@get-bb/plugin-sdk/testing/app";
-import { registerToggleTarget } from "./bus";
+import { preferences, registerToggleTarget } from "./bus";
 
 let toggles: string[] = [];
 let cleanups: Array<() => void> = [];
@@ -18,17 +18,18 @@ function composer(name: string): HTMLElement {
   return box;
 }
 
-function key(type: "keydown" | "keyup", keyName: string, at: number) {
-  const event = new KeyboardEvent(type, { key: keyName, bubbles: true });
+function key(type: "keydown" | "keyup", keyName: string, at: number, code = "") {
+  const event = new KeyboardEvent(type, { key: keyName, code, bubbles: true });
   Object.defineProperty(event, "timeStamp", { value: at });
   window.dispatchEvent(event);
 }
-const tap = (down: number, up = down + 80) => {
-  key("keydown", "Control", down);
-  key("keyup", "Control", up);
+const tap = (down: number, up = down + 80, code = "ControlLeft") => {
+  key("keydown", "Control", down, code);
+  key("keyup", "Control", up, code);
 };
 
 beforeEach(async () => {
+  preferences.toggleKey = "Control";
   toggles = [];
   document.body.innerHTML = "";
   Element.prototype.getClientRects = () => [{}] as unknown as DOMRectList;
@@ -89,4 +90,17 @@ test("stops listening after dispose", async () => {
   dispose = async () => {};
   tap(1000);
   expect(toggles).toEqual([]);
+});
+
+test("left or right Control only, when configured", () => {
+  composer("main");
+  preferences.toggleKey = "ControlLeft";
+  tap(1000, 1080, "ControlRight");
+  expect(toggles).toEqual([]);
+  tap(2000, 2080, "ControlLeft");
+  expect(toggles).toEqual(["main"]);
+  preferences.toggleKey = "ControlRight";
+  tap(3000, 3080, "ControlLeft");
+  tap(4000, 4080, "ControlRight");
+  expect(toggles).toEqual(["main", "main"]);
 });

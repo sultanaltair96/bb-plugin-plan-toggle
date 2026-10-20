@@ -2,6 +2,11 @@
 // Both live in this plugin's single frontend bundle, so module state is
 // shared within one bb window.
 
+import type { ToggleKeySetting } from "./keys";
+
+/** Mirrors the plugin's settings; updated by mounted composer banners. */
+export const preferences: { toggleKey: ToggleKeySetting } = { toggleKey: "auto" };
+
 export interface ToggleTarget {
   /** True when `promptbox` is this composer's `[data-promptbox]` element. */
   owns(promptbox: Element): boolean;

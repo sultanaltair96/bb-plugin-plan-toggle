@@ -26,7 +26,8 @@ function render(initial: Record<string, typeof opus> = {}) {
       },
       rpc: {
         plan_models_get: () => ({ models }),
-        plan_model_set: (input: { providerId: string; selection: typeof opus | null }) => {
+        plan_model_set: (raw: unknown) => {
+          const input = raw as { providerId: string; selection: typeof opus | null };
           sets.push(input);
           models = { ...models };
           if (input.selection) models[input.providerId] = input.selection;

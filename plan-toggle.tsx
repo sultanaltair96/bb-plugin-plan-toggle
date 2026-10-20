@@ -7,10 +7,12 @@ import {
   experimental_useSidebarThreads,
   useComposer,
   useSdk,
+  useSettings,
 } from "@get-bb/plugin-sdk/app";
-import { registerToggleTarget } from "./bus";
+import { preferences, registerToggleTarget } from "./bus";
 import { hasPlanCommand, withPlanCommand, withoutPlanCommand } from "./draft";
 import { PROMPTBOX } from "./keyboard";
+import { parseToggleKeySetting } from "./keys";
 import { switchToBuildModel, switchToPlanModel, usePlanModels } from "./plan-models";
 
 /**
@@ -32,6 +34,10 @@ export function PlanToggle() {
   const { providers, status: providersStatus } = experimental_useProviders();
   const { models: planModels } = usePlanModels();
   const marker = useRef<HTMLSpanElement>(null);
+  const toggleKey = useSettings().values?.toggleKey;
+  useEffect(() => {
+    preferences.toggleKey = parseToggleKeySetting(toggleKey);
+  }, [toggleKey]);
 
   const threadId = composer.scope.kind === "thread" ? composer.scope.threadId : null;
   const thread = threadId ? threads.find((candidate) => candidate.id === threadId) : undefined;

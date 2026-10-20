@@ -1,7 +1,9 @@
-// Tap Control (press and release on its own) to toggle Plan mode in the
-// composer you are using. Installed as a content script.
+// Tap Control (press and release on its own; left Ctrl off the Mac by
+// default) to toggle Plan mode in the composer you are using. Installed as a
+// content script.
 import type { PluginContentScriptContext } from "@get-bb/plugin-sdk/app";
-import { requestToggle } from "./bus";
+import { preferences, requestToggle } from "./bus";
+import { matchesToggleKey, resolveToggleKey } from "./keys";
 
 /** A press held longer than this is not a tap. */
 export const MAX_TAP_MS = 300;
@@ -29,8 +31,11 @@ export function mountKeyboardShortcut({ signal }: PluginContentScriptContext): (
     pressIsClean = false;
   };
 
+  const isToggleKey = (event: KeyboardEvent) =>
+    matchesToggleKey(event, resolveToggleKey(preferences.toggleKey));
+
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Control") {
+    if (isToggleKey(event)) {
       if (event.repeat) return;
       pressStartedAt = event.timeStamp;
       pressIsClean = true;
@@ -41,7 +46,7 @@ export function mountKeyboardShortcut({ signal }: PluginContentScriptContext): (
   };
 
   const onKeyUp = (event: KeyboardEvent) => {
-    if (event.key !== "Control") return;
+    if (!isToggleKey(event)) return;
     const isTap =
       pressIsClean &&
       pressStartedAt !== null &&
